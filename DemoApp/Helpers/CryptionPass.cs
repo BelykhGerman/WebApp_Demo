@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace DemoApp.Helpers {
+namespace DemoApp.Core.Helpers {
 
     internal sealed class CryptionPass {
 

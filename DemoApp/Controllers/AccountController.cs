@@ -1,9 +1,9 @@
-﻿using DemoApp.Models;
-using DemoApp.ViewModels;
+﻿using DemoApp.Core.DAL;
+using DemoApp.Core.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DemoApp.Controllers {
+namespace DemoApp.Core.Controllers {
 
     public class AccountController : Controller {
         private ApplicationContext DataBase { get; }
@@ -46,6 +46,5 @@ namespace DemoApp.Controllers {
         }
 
         #endregion Register
-
     }
 }

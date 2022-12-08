@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DemoApp.Controllers {
+namespace DemoApp.Core.Controllers {
 
     public class ErrorController : Controller {
         private readonly ILogger<ErrorController> logger;

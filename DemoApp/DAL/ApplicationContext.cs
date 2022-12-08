@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace DemoApp.Models {
+namespace DemoApp.Core.DAL {
 
     public class ApplicationContext : IdentityDbContext {
         public DbSet<IdentityUser> IdentityUsers { get; set; } = null!;

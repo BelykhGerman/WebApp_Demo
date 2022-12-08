@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DemoApp.ViewModels {
+namespace DemoApp.Core.ViewModels {
 
     public class RegisterViewModel {
+
         [Display ( Name = "Email" )]
         [Required]
         [DataType ( DataType.EmailAddress )]

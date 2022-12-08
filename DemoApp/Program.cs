@@ -1,4 +1,4 @@
-using DemoApp.Models;
+using DemoApp.Core.DAL;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +25,7 @@ try {
     builder.Host.UseNLog ();
     builder.Services.AddControllersWithViews ();
     var app = builder.Build ();
-    app.UseStaticFiles();
+    app.UseStaticFiles ();
     app.MapControllers ();
     if(app.Environment.IsDevelopment ()) {
         app.UseDeveloperExceptionPage ();
