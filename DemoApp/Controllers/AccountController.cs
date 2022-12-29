@@ -2,6 +2,7 @@
 using DemoApp.Core.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DemoApp.Core.Controllers {
 
@@ -46,5 +47,35 @@ namespace DemoApp.Core.Controllers {
         }
 
         #endregion Register
+
+        #region Login/Logout
+
+        [Route ( "{controller}/Logout" )]
+        [HttpGet]
+        public async Task<IActionResult> Logout() {
+            await SignInManager.SignOutAsync ();
+            return RedirectToAction ( "index", "home" );
+        }
+
+        [Route ( "{controller}/Login" )]
+        [HttpGet]
+        public IActionResult Login() {
+            return View ();
+        }
+
+        [Route ( "{controller}/Login" )]
+        [HttpPost]
+        public async Task<IActionResult> Login( LoginViewModel model ) {
+            if(ModelState.IsValid) {
+                var result = await SignInManager.PasswordSignInAsync ( model.Email, model.Password, model.RememberMe, false );
+                if(result.Succeeded) {
+                    return RedirectToAction ( "index", "home" );
+                }
+                ModelState.AddModelError ( string.Empty, "Invalid login attempt" );
+            }
+            return View ( model );
+        }
+
+        #endregion Login/Logout
     }
 }
