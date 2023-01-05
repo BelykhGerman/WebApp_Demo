@@ -6,7 +6,7 @@ namespace DemoApp.Core.Controllers {
 
         [Route ( "" )]
         [HttpGet]
-        public async Task<IActionResult> Index() {
+        public IActionResult Index() {
             return View ();
         }
     }

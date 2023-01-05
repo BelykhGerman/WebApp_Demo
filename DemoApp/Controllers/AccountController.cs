@@ -1,11 +1,12 @@
 ﻿using DemoApp.Core.DAL;
 using DemoApp.Core.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace DemoApp.Core.Controllers {
 
+    [AllowAnonymous]
     public class AccountController : Controller {
         private ApplicationContext DataBase { get; }
         private UserManager<IdentityUser> UserManager { get; }
@@ -28,7 +29,7 @@ namespace DemoApp.Core.Controllers {
 
         [Route ( "{controller}/Register" )]
         [HttpPost]
-        public async Task<IActionResult> Register( RegisterViewModel model ) {
+        public async Task<IActionResult> Register( RegisterViewModel model, string? returnUrl ) {
             if(ModelState.IsValid) {
                 IdentityUser identityUser = new () { UserName = model.Email, Email = model.Email };
 
@@ -36,6 +37,9 @@ namespace DemoApp.Core.Controllers {
 
                 if(result.Succeeded) {
                     await SignInManager.SignInAsync ( identityUser, isPersistent: false );
+                    if(!string.IsNullOrEmpty ( returnUrl )) {
+                        return Redirect ( returnUrl );
+                    }
                     return RedirectToAction ( "index", "home" );
                 }
 
@@ -65,10 +69,13 @@ namespace DemoApp.Core.Controllers {
 
         [Route ( "{controller}/Login" )]
         [HttpPost]
-        public async Task<IActionResult> Login( LoginViewModel model ) {
+        public async Task<IActionResult> Login( LoginViewModel model, string? returnUrl ) {
             if(ModelState.IsValid) {
                 var result = await SignInManager.PasswordSignInAsync ( model.Email, model.Password, model.RememberMe, false );
                 if(result.Succeeded) {
+                    if(!string.IsNullOrEmpty ( returnUrl )) {
+                        return Redirect ( returnUrl );
+                    }
                     return RedirectToAction ( "index", "home" );
                 }
                 ModelState.AddModelError ( string.Empty, "Invalid login attempt" );

@@ -1,32 +1,46 @@
 using DemoApp.Core.DAL;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
 
-var logger = NLog.LogManager.Setup ().LoadConfigurationFromAppSettings ().GetCurrentClassLogger ();
+var logger = LogManager.Setup ().LoadConfigurationFromAppSettings ().GetCurrentClassLogger ();
 
 try {
     var builder = WebApplication.CreateBuilder ( args );
     string demoAppConnection = builder.Configuration.GetConnectionString ( "DefaultConnection" );
     builder.Services.AddDbContextPool<ApplicationContext> ( options => options.UseSqlServer ( demoAppConnection ) );
-    builder.Services.AddIdentity<IdentityUser, IdentityRole> ( options => {
-        options.Password.RequiredLength = 12;
-    } ).AddEntityFrameworkStores<ApplicationContext> ();
-    builder.Services.AddAuthorization ();
-    builder.Services.AddAuthentication ( CookieAuthenticationDefaults.AuthenticationScheme )
-        .AddCookie ( options => {
-            options.ExpireTimeSpan = TimeSpan.FromMinutes ( 20 );
-            options.SlidingExpiration = true;
-            options.LoginPath = "/LoginMain/Login";
-        } );
+    builder.Services.AddDatabaseDeveloperPageExceptionFilter ();
+
+    builder.Services.AddIdentity<IdentityUser, IdentityRole> ().AddEntityFrameworkStores<ApplicationContext> ();
+
+    builder.Services.Configure<IdentityOptions> ( options => {
+        // Password settings.
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireNonAlphanumeric = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequiredLength = 6;
+        options.Password.RequiredUniqueChars = 1;
+
+        // Lockout settings.
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes ( 5 );
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.AllowedForNewUsers = true;
+
+        // User settings.
+        options.User.AllowedUserNameCharacters =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+        options.User.RequireUniqueEmail = false;
+    } );
+
     builder.Logging.ClearProviders ();
     builder.Host.UseNLog ();
     builder.Services.AddControllersWithViews ();
+
     var app = builder.Build ();
     app.UseStaticFiles ();
-    app.MapControllers ();
+    app.MapControllers ()/*.RequireAuthorization()*/;
     if(app.Environment.IsDevelopment ()) {
         app.UseDeveloperExceptionPage ();
     }
@@ -36,6 +50,7 @@ try {
     }
     app.UseStatusCodePagesWithReExecute ( "/Error/{0}" );
 
+    app.UseAuthorization ();
     app.UseAuthentication ();
     app.Run ();
 }

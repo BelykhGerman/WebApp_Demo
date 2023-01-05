@@ -8,6 +8,7 @@ namespace DemoApp.Core.ViewModels {
         [Required]
         [DataType ( DataType.EmailAddress )]
         public string? Email { get; set; }
+
         [Display ( Name = "Password" )]
         [Required]
         [DataType ( DataType.Password )]
